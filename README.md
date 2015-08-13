@@ -129,3 +129,4 @@ usage: hadoop jar camus-example-<version>-SNAPSHOT.jar com.linkedin.camus.etl.ka
  -P <arg>              external properties filename
  -p <arg>              properties filename from the classpath
 ```
+/opt/hadoop/bin/hadoop jar camus-example/target/camus-example-0.1.0-SNAPSHOT-shaded.jar com.linkedin.camus.etl.kafka.CamusJob -P  /opt/camus/config/config.properties  
