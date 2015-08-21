@@ -136,9 +136,9 @@ public class EtlMultiOutputCommitter extends FileOutputCommitter {
     }
 
     SequenceFile.Writer offsetWriter = SequenceFile.createWriter(fs, context.getConfiguration(),
-        new Path(super.getWorkPath(),
-            EtlMultiOutputFormat.getUniqueFile(context, EtlMultiOutputFormat.OFFSET_PREFIX, "")),
-        EtlKey.class, NullWritable.class);
+            new Path(super.getWorkPath(),
+                    EtlMultiOutputFormat.getUniqueFile(context, EtlMultiOutputFormat.OFFSET_PREFIX, "")),
+            EtlKey.class, NullWritable.class);
     for (String s : offsets.keySet()) {
       log.info("Avg record size for " + offsets.get(s).getTopic() + ":" + offsets.get(s).getPartition() + " = "
           + offsets.get(s).getMessageSize());
@@ -150,7 +150,14 @@ public class EtlMultiOutputCommitter extends FileOutputCommitter {
 
   protected void commitFile(JobContext job, Path source, Path target) throws IOException {
     log.info(String.format("Moving %s to %s", source, target));
-    if (!FileSystem.get(job.getConfiguration()).rename(source, target)) {
+    FileSystem fs  = FileSystem.get(job.getConfiguration());
+    if (fs.exists(target))
+    {
+      log.warn(String.format("Removing existing file %s", target));
+      fs.delete(target, true);
+    }
+
+    if (!fs.rename(source, target)) {
       log.error(String.format("Failed to move from %s to %s", source, target));
       throw new IOException(String.format("Failed to move from %s to %s", source, target));
     }
